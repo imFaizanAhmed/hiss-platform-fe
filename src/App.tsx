@@ -32,7 +32,7 @@ function App() {
       <div className="App bg-[#546e7a] bg-opacity-15 min-h-screen">
         <header className="App-header">
           <PrimarySearchAppBar />
-          <div className="grid grid-cols-5 py-4 gap-4">
+          <div className="grid grid-cols-5 pt-20 pb-4 gap-4">
             <ProfileSection />
             <div className="max-w-[555px] col-span-2 col-start-3">
               <CreatePost />
