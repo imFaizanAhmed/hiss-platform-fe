@@ -39,7 +39,7 @@ export default function RecipeReviewCard() {
   };
 
   return (
-    <Card>
+    <Card className='!rounded-lg'>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">

@@ -3,7 +3,7 @@ import { Images } from "../../assets";
 
 const CreatePost = () => {
   return (
-    <div className="py-2 px-4 max-w-[555px] w-screen bg-white rounded-lg">
+    <div className="py-2 px-4 max-w-[550px] w-screen bg-white rounded-lg">
       <div className="flex gap-2">
         <Avatar
           alt="Remy Sharp"

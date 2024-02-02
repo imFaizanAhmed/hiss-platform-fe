@@ -2,7 +2,8 @@ import "./input.css";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import PrimarySearchAppBar from "./components/header";
 import CreatePost from "./components/create-post";
-import RecipeReviewCard from "./components/post";
+import Posts from "./pages/posts";
+import ProfileSection from "./components/profile-section";
 
 const theme = createTheme({
   palette: {
@@ -20,6 +21,9 @@ const theme = createTheme({
     },
     // mode: 'dark'
   },
+  typography: {
+    fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+  },
 });
 
 function App() {
@@ -28,13 +32,13 @@ function App() {
       <div className="App bg-[#546e7a] bg-opacity-15 min-h-screen">
         <header className="App-header">
           <PrimarySearchAppBar />
-          <div className="flex justify-center flex-wrap h-full mt-8 mx-2">
-            <CreatePost />
-            <div className="max-w-[555px] w-full mt-8 bg-white rounded-lg">
-              <RecipeReviewCard />
+          <div className="grid grid-cols-5 py-4 gap-4">
+            <ProfileSection />
+            <div className="max-w-[555px] col-span-2 col-start-3">
+              <CreatePost />
+              <Posts />
             </div>
           </div>
-          <h1 className="text-right font-bold underline">Hello world!</h1>
         </header>
       </div>
     </ThemeProvider>
