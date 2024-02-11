@@ -1,17 +1,10 @@
-import { useTheme } from "@mui/material/styles";
 import CreatePost from "../components/create-post";
 import PrimarySearchAppBar from "../components/header";
 import ProfileSection from "../components/profile-section";
-import AuthPage from "./auth.page";
 import Posts from "./posts";
 
 const MainPage = () => {
-  const theme = useTheme();
   return (
-    <div
-      className="App bg-opacity-15 min-h-screen"
-      style={{ backgroundColor: theme.palette.background.default }}
-    >
       <header className="App-header">
         {/* <CallAPI /> */}
         <PrimarySearchAppBar />
@@ -22,9 +15,7 @@ const MainPage = () => {
             <Posts />
           </div>
         </div>
-        <AuthPage />
       </header>
-    </div>
   );
 };
 

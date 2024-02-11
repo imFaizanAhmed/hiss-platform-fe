@@ -9,41 +9,133 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { ValidationError } from "../../lib/validation-error";
+
+type SignUpDataType = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+};
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
+  const [formData, setFormData] = useState<SignUpDataType>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState<SignUpDataType>({});
+  const navigate = useNavigate();
+
+  const validateForm = () => {
+    const newErrors: SignUpDataType = {};
+
+    if (!formData.firstName?.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    if (!formData.lastName?.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+    if (!formData.email?.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+    if (!formData.password?.trim()) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+    }
+    if (!formData.confirmPassword?.trim()) {
+      newErrors.confirmPassword = "Confirm password is required";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm password should be same as password";
+    }
+
+    // If there are errors, set them and prevent form submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    } else {
+      setErrors({});
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Validate form fields
+    validateForm();
+
+    // If there are no errors, submit the form
+    console.log("Form submitted:", formData);
+    navigate("/home");
+    // Here you can proceed with your form submission logic
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData])
+
   return (
-    <div className="flex flex-wrap max-w-[490px]">
-      <div className="flex pb-2 flex-[100%]">
+    <form className="flex flex-wrap max-w-[490px]" onSubmit={(e) => handleSubmit(e)}>
+      <div className="flex pb-4 flex-[100%]">
         <FormControl variant="filled" className="flex-[100%] !mr-2">
           <TextField
             variant="outlined"
             required
             fullWidth
+            value={formData.firstName}
+            error={!!errors.firstName}
+            onChange={handleChange}
             name="firstName"
             label="First Name"
             type={"text"}
           />
+          {!!errors.firstName && (
+          <ValidationError errors={[errors.firstName]} />
+        )}
         </FormControl>
         <FormControl variant="filled" className="flex-[100%]">
           <TextField
             variant="outlined"
             required
             fullWidth
+            value={formData.lastName}
+            error={!!errors.lastName}
+            onChange={handleChange}
             name="lastName"
             label="Last Name"
             type={"text"}
           />
+          {!!errors.lastName && (
+          <ValidationError errors={[errors.lastName]} />
+        )}
         </FormControl>
       </div>
-      <FormControl variant="filled" className="flex-[100%] !mb-2">
+      <FormControl variant="filled" className="flex-[100%] !mb-4">
         <TextField
           variant="outlined"
           required
           fullWidth
+          value={formData.email}
+          error={!!errors.email}
+          onChange={handleChange}
           name="email"
           label="Email"
           type={"email"}
@@ -51,13 +143,21 @@ const SignUp = () => {
         <FormHelperText id="my-helper-text">
           We'll never share your email.
         </FormHelperText>
+        {!!errors.email && (
+          <ValidationError errors={[errors['email']]} />
+        )}
       </FormControl>
-      <FormControl variant="outlined" className="flex-[100%] !mb-2">
+      <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
           required
+          name="password"
+          value={formData.password}
+          error={!!errors.password}
+          // helperText={errors.password}
+          onChange={handleChange}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -69,10 +169,13 @@ const SignUp = () => {
               </IconButton>
             </InputAdornment>
           }
-          label="Password *"
+          label="Password"
         />
+        {!!errors.password && (
+          <ValidationError errors={[errors.password]} />
+        )}
       </FormControl>
-      <FormControl variant="outlined" className="flex-[100%] mb-2">
+      <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">
           Confirm Password
         </InputLabel>
@@ -80,6 +183,10 @@ const SignUp = () => {
           id="outlined-adornment-password"
           type={showConfirmPassword ? "text" : "password"}
           required
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          error={!!errors.confirmPassword}
+          onChange={handleChange}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -91,13 +198,16 @@ const SignUp = () => {
               </IconButton>
             </InputAdornment>
           }
-          label="Confirm Password *"
+          label="Confirm Password"
         />
+        {!!errors.confirmPassword && (
+          <ValidationError errors={[errors.confirmPassword]} />
+        )}
       </FormControl>
-      <Button variant="contained" className="!mt-2 flex-[100%] w-10">
+      <Button variant="contained" type="submit" className=" flex-[100%] w-10">
         Sign Up
       </Button>
-    </div>
+    </form>
   );
 };
 

@@ -12,8 +12,8 @@ const AuthComp = ({
   handleChange?: (event: React.SyntheticEvent, newValue: AuthTabTypes) => void;
 }) => {
   return (
-    <div className="w-screen min-h-screen flex justify-center items-center">
-      <div className="bg-white text-black rounded-lg m-4 p-4 relative sm:p-8">
+    <div className=" min-h-screen flex justify-center items-center">
+      <div className="bg-white text-black h-fit w-fit max-w-[500px] rounded-lg relative mx-4 py-8 px-4 sm:p-8">
         <img
           src={Images.lightLogo}
           className="h-20 w-20 p-2 mr-1 absolute top-[-40px] left-[calc(50%-40px)]
