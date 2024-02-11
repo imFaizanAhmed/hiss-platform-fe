@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
+import { RouterProvider } from "react-router-dom";
+import { darkTheme, lightTheme } from "./themes";
+import { router } from "./routes";
 import "./input.css";
-import MainPage from "./pages";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,45 +15,17 @@ const queryClient = new QueryClient({
   },
 });
 
-const lightTheme = createTheme({
-  palette: {
-    primary: {
-      main: "#1DA1F2",
-    },
-    secondary: {
-      main: "#546e7a",
-    },
-    common: {
-      white: "#546e7a",
-    },
-    info: {
-      main: "#fff"
-    },
-    background: {
-      default: "#e5e9eb",
-    },
-    // mode: 'dark'
-  },
-  typography: {
-    fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(","),
-  },
-});
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark'
-  },
-  typography: {
-    fontFamily: ["Roboto", "Helvetica", "Arial", "sans-serif"].join(","),
-  },
-});
-
 function App() {
-  const [light, setLight] = useState(true);
+  const [theme, setTheme] = useState(lightTheme);
   return (
-    <ThemeProvider theme={light? lightTheme: darkTheme}>
+    <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
-        <MainPage />
+        <div
+          className="App bg-opacity-15 min-h-screen"
+          style={{ backgroundColor: theme.palette.background.default }}
+        >
+          <RouterProvider router={router} />
+        </div>
       </QueryClientProvider>
     </ThemeProvider>
   );
