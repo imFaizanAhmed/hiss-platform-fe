@@ -22,6 +22,7 @@ type SignUpDataType = {
 };
 
 const SignUp = () => {
+  const [firstTime, setFirstTime] = useState<boolean>(true);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -63,6 +64,47 @@ const SignUp = () => {
     // If there are errors, set them and prevent form submission
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return false;
+    } else {
+      setErrors({});
+      return true;
+    }
+  };
+
+  const validateInput = ({
+    name,
+    value,
+  }: {
+    name: string;
+    value: string;
+  }) => {
+    let newErrors: SignUpDataType = {...errors};
+
+    if (name === "firstName" && !value) {
+      newErrors.firstName = "First name is required.";
+    }
+    else if (name === "lastName" && !value) {
+      newErrors.lastName = "Last name is required.";
+    }
+    else if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
+      newErrors.email = "Enter valid email address.";
+    }
+    else if (name === "email" && !value) {
+      newErrors.email = "Email is required.";
+    }
+    else if (name === "password" && (!value || value.length < 6)) {
+      newErrors.password = "Password must be 6 characters long.";
+    }
+    else if (name === "confirmPassword" && (!value || formData.password !== value)) {
+      newErrors.confirmPassword = "Confirm password should be same as password.";
+    }
+    else {
+      newErrors = {...errors, [name]: ''}
+    }
+
+     // If there are errors, set them and prevent form submission
+     if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     } else {
       setErrors({});
@@ -71,6 +113,7 @@ const SignUp = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    validateInput({ name, value });
     setFormData({
       ...formData,
       [name]: value,
@@ -80,7 +123,7 @@ const SignUp = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate form fields
-    validateForm();
+    if (!validateForm()) return;
 
     // If there are no errors, submit the form
     console.log("Form submitted:", formData);
@@ -88,18 +131,18 @@ const SignUp = () => {
     // Here you can proceed with your form submission logic
   };
 
-  useEffect(() => {
-    validateForm();
-  }, [formData])
-
   return (
-    <form className="flex flex-wrap max-w-[490px]" onSubmit={(e) => handleSubmit(e)}>
+    <form
+      className="flex flex-wrap max-w-[490px]"
+      onSubmit={(e) => handleSubmit(e)}
+    >
       <div className="flex pb-4 flex-[100%]">
         <FormControl variant="filled" className="flex-[100%] !mr-2">
           <TextField
             variant="outlined"
             required
             fullWidth
+            autoFocus
             value={formData.firstName}
             error={!!errors.firstName}
             onChange={handleChange}
@@ -108,8 +151,8 @@ const SignUp = () => {
             type={"text"}
           />
           {!!errors.firstName && (
-          <ValidationError errors={[errors.firstName]} />
-        )}
+            <ValidationError errors={[errors.firstName]} />
+          )}
         </FormControl>
         <FormControl variant="filled" className="flex-[100%]">
           <TextField
@@ -123,9 +166,7 @@ const SignUp = () => {
             label="Last Name"
             type={"text"}
           />
-          {!!errors.lastName && (
-          <ValidationError errors={[errors.lastName]} />
-        )}
+          {!!errors.lastName && <ValidationError errors={[errors.lastName]} />}
         </FormControl>
       </div>
       <FormControl variant="filled" className="flex-[100%] !mb-4">
@@ -143,9 +184,7 @@ const SignUp = () => {
         <FormHelperText id="my-helper-text">
           We'll never share your email.
         </FormHelperText>
-        {!!errors.email && (
-          <ValidationError errors={[errors['email']]} />
-        )}
+        {!!errors.email && <ValidationError errors={[errors["email"]]} />}
       </FormControl>
       <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
@@ -171,9 +210,7 @@ const SignUp = () => {
           }
           label="Password"
         />
-        {!!errors.password && (
-          <ValidationError errors={[errors.password]} />
-        )}
+        {!!errors.password && <ValidationError errors={[errors.password]} />}
       </FormControl>
       <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">
