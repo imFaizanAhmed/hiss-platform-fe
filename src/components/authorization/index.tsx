@@ -1,8 +1,8 @@
 import { Tab, Tabs } from "@mui/material";
 import { Images } from "../../assets";
 import { AuthTabTypes } from "../../types/auth-type";
-import Login from "./logins";
-import SignUp from "./signUp";
+import LoginFormWithValidation from "./logins";
+import SignUpFormWithValidation from "./signUp";
 
 const AuthComp = ({
   value = "signIn",
@@ -32,8 +32,8 @@ const AuthComp = ({
             <Tab value="signUp" label="Sign up" />
           </Tabs>
         </div>
-        {value === "signIn" && <Login />}
-        {value === "signUp" && <SignUp />}
+        {value === "signIn" && <LoginFormWithValidation />}
+        {value === "signUp" && <SignUpFormWithValidation />}
       </div>
     </div>
   );

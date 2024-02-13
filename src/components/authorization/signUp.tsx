@@ -1,4 +1,5 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { FormEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -9,9 +10,11 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { FormEvent, useEffect, useState } from "react";
-import { ValidationError } from "../../lib/validation-error";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import withFormValidation, {
+  ValidationRules,
+} from "../../lib/form-validation.hoc";
+import { ShowValidationError } from "../../lib/validation.error";
 
 type SignUpDataType = {
   firstName?: string;
@@ -21,8 +24,23 @@ type SignUpDataType = {
   confirmPassword?: string;
 };
 
-const SignUp = () => {
-  const [firstTime, setFirstTime] = useState<boolean>(true);
+const SignUp = ({
+  validateForm,
+  validateInput,
+  errors,
+}: {
+  validateForm?: (formData: { [key: string]: string }) => boolean;
+  validateInput?: ({
+    formData,
+    name,
+    value,
+  }: {
+    formData: { [key: string]: string };
+    name: string;
+    value: string;
+  }) => boolean;
+  errors?: { [key: string]: string };
+}) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -33,87 +51,11 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
   });
-  const [errors, setErrors] = useState<SignUpDataType>({});
   const navigate = useNavigate();
-
-  const validateForm = () => {
-    const newErrors: SignUpDataType = {};
-
-    if (!formData.firstName?.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-    if (!formData.lastName?.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-    if (!formData.email?.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!formData.password?.trim()) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long";
-    }
-    if (!formData.confirmPassword?.trim()) {
-      newErrors.confirmPassword = "Confirm password is required";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm password should be same as password";
-    }
-
-    // If there are errors, set them and prevent form submission
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return false;
-    } else {
-      setErrors({});
-      return true;
-    }
-  };
-
-  const validateInput = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: string;
-  }) => {
-    let newErrors: SignUpDataType = {...errors};
-
-    if (name === "firstName" && !value) {
-      newErrors.firstName = "First name is required.";
-    }
-    else if (name === "lastName" && !value) {
-      newErrors.lastName = "Last name is required.";
-    }
-    else if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
-      newErrors.email = "Enter valid email address.";
-    }
-    else if (name === "email" && !value) {
-      newErrors.email = "Email is required.";
-    }
-    else if (name === "password" && (!value || value.length < 6)) {
-      newErrors.password = "Password must be 6 characters long.";
-    }
-    else if (name === "confirmPassword" && (!value || formData.password !== value)) {
-      newErrors.confirmPassword = "Confirm password should be same as password.";
-    }
-    else {
-      newErrors = {...errors, [name]: ''}
-    }
-
-     // If there are errors, set them and prevent form submission
-     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    } else {
-      setErrors({});
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    validateInput({ name, value });
+    if (!!validateInput) validateInput({ formData, name, value });
     setFormData({
       ...formData,
       [name]: value,
@@ -123,7 +65,7 @@ const SignUp = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate form fields
-    if (!validateForm()) return;
+    if (!!validateForm && !validateForm(formData)) return;
 
     // If there are no errors, submit the form
     console.log("Form submitted:", formData);
@@ -144,14 +86,14 @@ const SignUp = () => {
             fullWidth
             autoFocus
             value={formData.firstName}
-            error={!!errors.firstName}
+            error={!!errors && !!errors.firstName}
             onChange={handleChange}
             name="firstName"
             label="First Name"
             type={"text"}
           />
-          {!!errors.firstName && (
-            <ValidationError errors={[errors.firstName]} />
+          {!!errors && !!errors.firstName && (
+            <ShowValidationError errors={[errors.firstName]} />
           )}
         </FormControl>
         <FormControl variant="filled" className="flex-[100%]">
@@ -160,13 +102,15 @@ const SignUp = () => {
             required
             fullWidth
             value={formData.lastName}
-            error={!!errors.lastName}
+            error={!!errors && !!errors.lastName}
             onChange={handleChange}
             name="lastName"
             label="Last Name"
             type={"text"}
           />
-          {!!errors.lastName && <ValidationError errors={[errors.lastName]} />}
+          {!!errors && !!errors.lastName && (
+            <ShowValidationError errors={[errors.lastName]} />
+          )}
         </FormControl>
       </div>
       <FormControl variant="filled" className="flex-[100%] !mb-4">
@@ -175,7 +119,7 @@ const SignUp = () => {
           required
           fullWidth
           value={formData.email}
-          error={!!errors.email}
+          error={!!errors && !!errors.email}
           onChange={handleChange}
           name="email"
           label="Email"
@@ -184,7 +128,9 @@ const SignUp = () => {
         <FormHelperText id="my-helper-text">
           We'll never share your email.
         </FormHelperText>
-        {!!errors.email && <ValidationError errors={[errors["email"]]} />}
+        {!!errors && !!errors.email && (
+          <ShowValidationError errors={[errors["email"]]} />
+        )}
       </FormControl>
       <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
@@ -194,7 +140,7 @@ const SignUp = () => {
           required
           name="password"
           value={formData.password}
-          error={!!errors.password}
+          error={!!errors && !!errors.password}
           // helperText={errors.password}
           onChange={handleChange}
           endAdornment={
@@ -210,7 +156,9 @@ const SignUp = () => {
           }
           label="Password"
         />
-        {!!errors.password && <ValidationError errors={[errors.password]} />}
+        {!!errors && !!errors.password && (
+          <ShowValidationError errors={[errors.password]} />
+        )}
       </FormControl>
       <FormControl variant="outlined" className="flex-[100%] !mb-4">
         <InputLabel htmlFor="outlined-adornment-password">
@@ -222,7 +170,7 @@ const SignUp = () => {
           required
           name="confirmPassword"
           value={formData.confirmPassword}
-          error={!!errors.confirmPassword}
+          error={!!errors && !!errors.confirmPassword}
           onChange={handleChange}
           endAdornment={
             <InputAdornment position="end">
@@ -237,8 +185,8 @@ const SignUp = () => {
           }
           label="Confirm Password"
         />
-        {!!errors.confirmPassword && (
-          <ValidationError errors={[errors.confirmPassword]} />
+        {!!errors && !!errors.confirmPassword && (
+          <ShowValidationError errors={[errors.confirmPassword]} />
         )}
       </FormControl>
       <Button variant="contained" type="submit" className=" flex-[100%] w-10">
@@ -248,4 +196,39 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+const validationRules: ValidationRules = {
+  firstName: [
+    { validator: (value) => !!value, message: "First name is required" },
+  ],
+  lastName: [
+    { validator: (value) => !!value, message: "Last name is required" },
+  ],
+  email: [
+    { validator: (value) => !!value, message: "Email is required" },
+    {
+      validator: (value) => /\S+@\S+\.\S+/.test(value),
+      message: "Email is invalid",
+    },
+  ],
+  password: [
+    { validator: (value) => !!value, message: "Password is required" },
+    {
+      validator: (value) => value.length > 6,
+      message: "Password must be at least 6 characters long",
+    },
+  ],
+  confirmPassword: [
+    {
+      validator: (value, formData) =>
+        !!value && !!formData && value === formData.password,
+      message: "confirm Password should be same as confirm password",
+    },
+    {
+      validator: (value) => value.length > 6,
+      message: "Password must be at least 6 characters long",
+    },
+  ],
+};
+
+const SignUpFormWithValidation = withFormValidation(SignUp, validationRules);
+export default SignUpFormWithValidation;
