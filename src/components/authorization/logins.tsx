@@ -16,6 +16,9 @@ import withFormValidation, {
   ValidationRules,
 } from "../../lib/form-validation.hoc";
 import { ShowValidationError } from "../../lib/validation.error";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle, faLinkedinIn, faMailchimp } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope} from "@fortawesome/free-solid-svg-icons"
 
 type LoginDataType = {
   email?: string;
@@ -36,6 +39,7 @@ const Login = ({
     password: "",
   });
   const [showPassword, setShow] = useState<boolean>(false);
+  const [isEmailForm, setEmailForm] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,69 +63,93 @@ const Login = ({
   };
 
   return (
-    <form className="flex flex-wrap" onSubmit={(e) => handleSubmit(e)}>
-      <FormControl variant="filled" className="flex-[100%] !pb-4">
-        <TextField
-          id="outlined-email-input"
-          variant="outlined"
-          required
-          fullWidth
-          value={formData.email}
-          error={!!errors && !!errors.email}
-          onChange={handleChange}
-          name="email"
-          label="Email"
-          type={"email"}
-          autoFocus
-        />
-        {!!errors && !!errors["email"] && (
-          <ShowValidationError errors={[errors["email"]]} />
-        )}
-      </FormControl>
-      <FormControl variant="outlined" className="flex-[100%] !pb-4">
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-password"
-          type={showPassword ? "text" : "password"}
-          required
-          name="password"
-          value={formData.password}
-          error={!!errors && !!errors.password}
-          label="Password"
-          autoComplete="current-password"
-          onChange={handleChange}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={() => setShow(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-        {!!errors && !!errors["password"] && (
-          <ShowValidationError errors={[errors["password"]]} />
-        )}
-      </FormControl>
-      <Button
-        variant="contained"
-        type="submit"
-        onSubmit={(e) => console.log("eeeee", e)}
-        className="flex-[100%] w-10"
-      >
-        Sign In
-      </Button>
-      <Grid container>
-        <Grid item xs>
-          <Link href="#" variant="body2">
-            Forgot password?
-          </Link>
-        </Grid>
-      </Grid>
-    </form>
+    <>
+      {!isEmailForm ? (
+        <div className="flex flex-col gap-2">
+          <Button
+            variant="outlined" className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
+            <FontAwesomeIcon icon={faGoogle} className="pr-4 h-5"/>
+            Login with Google
+          </Button>
+          <Button
+            variant="outlined" className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
+            <FontAwesomeIcon icon={faLinkedinIn} className="pr-4 h-5"/>
+            Login with Linkedin
+          </Button>
+          <Button
+            variant="outlined"onClick={() => setEmailForm(true)} className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
+            <FontAwesomeIcon icon={faEnvelope} className="pr-4 h-5"/>
+            Login with Email
+          </Button>
+        </div>
+      ) : (
+        <form className="flex flex-wrap" onSubmit={(e) => handleSubmit(e)}>
+          <FormControl variant="filled" className="flex-[100%] !pb-4">
+            <TextField
+              id="outlined-email-input"
+              variant="outlined"
+              required
+              fullWidth
+              value={formData.email}
+              error={!!errors && !!errors.email}
+              onChange={handleChange}
+              name="email"
+              label="Email"
+              type={"email"}
+              autoFocus
+            />
+            {!!errors && !!errors["email"] && (
+              <ShowValidationError errors={[errors["email"]]} />
+            )}
+          </FormControl>
+          <FormControl variant="outlined" className="flex-[100%] !pb-4">
+            <InputLabel htmlFor="outlined-adornment-password">
+              Password
+            </InputLabel>
+            <OutlinedInput
+              id="outlined-adornment-password"
+              type={showPassword ? "text" : "password"}
+              required
+              name="password"
+              value={formData.password}
+              error={!!errors && !!errors.password}
+              label="Password"
+              autoComplete="current-password"
+              onChange={handleChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShow(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            {!!errors && !!errors["password"] && (
+              <ShowValidationError errors={[errors["password"]]} />
+            )}
+          </FormControl>
+          <Button
+            variant="contained"
+            type="submit"
+            onSubmit={(e) => console.log("eeeee", e)}
+            className="flex-[100%] w-10"
+          >
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      )}
+    </>
   );
 };
 
