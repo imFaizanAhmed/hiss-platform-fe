@@ -17,8 +17,10 @@ import withFormValidation, {
 } from "../../lib/form-validation.hoc";
 import { ShowValidationError } from "../../lib/validation.error";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle, faLinkedinIn, faMailchimp } from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope} from "@fortawesome/free-solid-svg-icons"
+import { faGoogle, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import LoginWithGoogle from "./login-with-google";
+import LoginButton from "./login-button";
 
 type LoginDataType = {
   email?: string;
@@ -66,21 +68,16 @@ const Login = ({
     <>
       {!isEmailForm ? (
         <div className="flex flex-col gap-2">
-          <Button
-            variant="outlined" className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
-            <FontAwesomeIcon icon={faGoogle} className="pr-4 h-5"/>
-            Login with Google
-          </Button>
-          <Button
-            variant="outlined" className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
-            <FontAwesomeIcon icon={faLinkedinIn} className="pr-4 h-5"/>
-            Login with Linkedin
-          </Button>
-          <Button
-            variant="outlined"onClick={() => setEmailForm(true)} className="box-border m-1 px-[15px] py-0 text-left h-12 w-full align-middle whitespace-nowrap rounded-md text-base font-medium bg-red-50 focus:outline-none active:shadow-inner">
-            <FontAwesomeIcon icon={faEnvelope} className="pr-4 h-5"/>
-            Login with Email
-          </Button>
+          <LoginWithGoogle />
+          <LoginButton
+            icon={faLinkedinIn}
+            text={
+              <div>
+                Login with Linked <span className="text-xs">(In progress)</span>
+              </div>
+            }
+          />
+          <LoginButton icon={faEnvelope} onClick={() => setEmailForm(true)} text="Login with Email" />
         </div>
       ) : (
         <form className="flex flex-wrap" onSubmit={(e) => handleSubmit(e)}>
