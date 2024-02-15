@@ -1,8 +1,8 @@
 import { Tab, Tabs } from "@mui/material";
 import { Images } from "../../assets";
 import { AuthTabTypes } from "../../types/auth-type";
-import Login from "./logins";
-import SignUp from "./signUp";
+import LoginFormWithValidation from "./logins";
+import SignUpFormWithValidation from "./signUp";
 
 const AuthComp = ({
   value = "signIn",
@@ -13,7 +13,7 @@ const AuthComp = ({
 }) => {
   return (
     <div className=" min-h-screen flex justify-center items-center">
-      <div className="bg-white text-black h-fit w-fit max-w-[500px] rounded-lg relative mx-4 py-8 px-4 sm:p-8">
+      <div className="bg-white text-black h-fit w-screen max-w-[436px] rounded-lg relative mx-4 py-8 px-4 sm:p-8">
         <img
           src={Images.lightLogo}
           className="h-20 w-20 p-2 mr-1 absolute top-[-40px] left-[calc(50%-40px)]
@@ -32,8 +32,8 @@ const AuthComp = ({
             <Tab value="signUp" label="Sign up" />
           </Tabs>
         </div>
-        {value === "signIn" && <Login />}
-        {value === "signUp" && <SignUp />}
+        {value === "signIn" && <LoginFormWithValidation />}
+        {value === "signUp" && <SignUpFormWithValidation />}
       </div>
     </div>
   );
