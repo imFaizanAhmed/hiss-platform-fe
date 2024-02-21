@@ -1,5 +1,7 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { AxiosError, AxiosResponse } from "axios";
 import {
   Button,
   FormControl,
@@ -12,15 +14,16 @@ import {
   TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import withFormValidation, {
   ValidationRules,
 } from "../../lib/form-validation.hoc";
 import { ShowValidationError } from "../../lib/validation.error";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import LoginWithGoogle from "./login-with-google";
 import LoginButton from "./login-button";
+import axiosInstance from "../../apis/axios";
+import { showToast } from "../../lib/toast";
 
 type LoginDataType = {
   email?: string;
@@ -44,6 +47,33 @@ const Login = ({
   const [isEmailForm, setEmailForm] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  const { mutate, isLoading, isError, error } = useMutation<
+    AxiosResponse,
+    AxiosError,
+    LoginDataType
+  >(loginUser, {
+    onSuccess: (data) => {
+      // Handle successful login here
+      console.log("data =>", data);
+      showToast("Login successful", "success");
+      // Redirect user or show success message
+      navigate("/home");
+    },
+    onError: (error) => {
+      // Handle error case here
+      if (error.response?.status === 401) {
+        showToast("Invalid Credentials", "error");
+      }
+    },
+  });
+
+  async function loginUser({
+    email,
+    password,
+  }: LoginDataType): Promise<AxiosResponse> {
+    return axiosInstance.post("/auth/login", { email, password });
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (!!validateInput) validateInput({ name, value });
@@ -58,10 +88,7 @@ const Login = ({
     // Validate form fields
     if (validateForm && !validateForm(formData)) return;
 
-    // If there are no errors, submit the form
-    console.log("Form submitted:", formData);
-    navigate("/home");
-    // Here you can proceed with your form submission logic
+    mutate(formData);
   };
 
   return (
@@ -77,7 +104,11 @@ const Login = ({
               </div>
             }
           />
-          <LoginButton icon={faEnvelope} onClick={() => setEmailForm(true)} text="Login with Email" />
+          <LoginButton
+            icon={faEnvelope}
+            onClick={() => setEmailForm(true)}
+            text="Login with Email"
+          />
         </div>
       ) : (
         <form className="flex flex-wrap" onSubmit={(e) => handleSubmit(e)}>
@@ -135,7 +166,7 @@ const Login = ({
             onSubmit={(e) => console.log("eeeee", e)}
             className="flex-[100%] w-10"
           >
-            Sign In
+            {isLoading ? "Loading..." : "Sign In"}
           </Button>
           <Grid container>
             <Grid item xs>
