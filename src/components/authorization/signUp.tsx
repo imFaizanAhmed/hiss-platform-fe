@@ -15,11 +15,16 @@ import withFormValidation, {
   ValidationRules,
 } from "../../lib/form-validation.hoc";
 import { ShowValidationError } from "../../lib/validation.error";
+import { useMutation } from "react-query";
+import { AxiosError, AxiosResponse } from "axios";
+import { showToast } from "../../lib/toast";
+import axiosInstance from "../../apis/axios";
 
 type SignUpDataType = {
   firstName?: string;
   lastName?: string;
   email?: string;
+  title?: string;
   password?: string;
   confirmPassword?: string;
 };
@@ -48,10 +53,33 @@ const SignUp = ({
     firstName: "",
     lastName: "",
     email: "",
+    title: "",
     password: "",
     confirmPassword: "",
   });
   const navigate = useNavigate();
+
+  const { mutate, isLoading, isError, error } = useMutation<
+    AxiosResponse,
+    AxiosError,
+    SignUpDataType
+  >(loginUser, {
+    onSuccess: (data) => {
+      // Handle successful login here
+      console.log("data =>", data);
+      showToast("Sign up successful", "success");
+      // Redirect user or show success message
+      navigate("/home");
+    },
+    onError: (error) => {
+      // Handle error case here
+      showToast("Invalid Credentials", "error");
+    },
+  });
+
+  async function loginUser(formData: SignUpDataType): Promise<AxiosResponse> {
+    return axiosInstance.post("/auth/signup", {...formData, authType: 'email'});
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -68,9 +96,7 @@ const SignUp = ({
     if (!!validateForm && !validateForm(formData)) return;
 
     // If there are no errors, submit the form
-    console.log("Form submitted:", formData);
-    navigate("/home");
-    // Here you can proceed with your form submission logic
+    mutate(formData);
   };
 
   return (
@@ -113,6 +139,22 @@ const SignUp = ({
           )}
         </FormControl>
       </div>
+      <FormControl variant="filled" className="flex-[100%] !mb-4">
+        <TextField
+          variant="outlined"
+          required
+          fullWidth
+          value={formData.title}
+          error={!!errors && !!errors.title}
+          onChange={handleChange}
+          name="title"
+          label="Title"
+          type={"text"}
+        />
+        {!!errors && !!errors.email && (
+          <ShowValidationError errors={[errors["title"]]} />
+        )}
+      </FormControl>
       <FormControl variant="filled" className="flex-[100%] !mb-4">
         <TextField
           variant="outlined"
@@ -190,7 +232,7 @@ const SignUp = ({
         )}
       </FormControl>
       <Button variant="contained" type="submit" className=" flex-[100%] w-10">
-        Sign Up
+        {isLoading ? "loading..." : "Sign Up"}
       </Button>
     </form>
   );
@@ -203,6 +245,9 @@ const validationRules: ValidationRules = {
   lastName: [
     { validator: (value) => !!value, message: "Last name is required" },
   ],
+  title: [
+    { validator: (value) => !!value, message: "Title is required" },
+  ],
   email: [
     { validator: (value) => !!value, message: "Email is required" },
     {
@@ -213,7 +258,7 @@ const validationRules: ValidationRules = {
   password: [
     { validator: (value) => !!value, message: "Password is required" },
     {
-      validator: (value) => value.length > 6,
+      validator: (value) => value.length >= 6,
       message: "Password must be at least 6 characters long",
     },
   ],
@@ -224,7 +269,7 @@ const validationRules: ValidationRules = {
       message: "confirm Password should be same as confirm password",
     },
     {
-      validator: (value) => value.length > 6,
+      validator: (value) => value.length >= 6,
       message: "Password must be at least 6 characters long",
     },
   ],
