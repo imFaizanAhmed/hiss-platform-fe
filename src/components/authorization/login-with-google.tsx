@@ -20,8 +20,6 @@ const LoginWithGoogle = () => {
     onSuccess: (credentialResponse) => {
       const { access_token: authAccessToken } = credentialResponse;
 
-      console.log("authAccessToken", authAccessToken)
-
       // Use the access token to make a request to the Google UserInfo endpoint
       fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
         headers: {
