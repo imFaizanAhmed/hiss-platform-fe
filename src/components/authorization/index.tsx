@@ -1,16 +1,29 @@
 import { Tab, Tabs } from "@mui/material";
 import { Images } from "../../assets";
-import { AuthTabTypes } from "../../types/auth-type";
+import { AuthTabTypes, OnActiveTabChange, SignUpDataType } from "../../types/auth-type";
 import LoginFormWithValidation from "./logins";
 import SignUpFormWithValidation from "./signUp";
+import { Dispatch, SetStateAction, createContext, useState } from "react";
+
+type AuthContextType = {
+  initialValues: SignUpDataType;
+  setInitialValues: Dispatch<SetStateAction<SignUpDataType>>;
+  onChangeActiveTab: OnActiveTabChange
+};
+
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthComp = ({
   value = "signIn",
-  handleChange,
+  onChangeActiveTab,
 }: {
   value?: AuthTabTypes;
-  handleChange?: (event: React.SyntheticEvent, newValue: AuthTabTypes) => void;
+  onChangeActiveTab: (
+    newValue: AuthTabTypes
+  ) => void;
 }) => {
+  const [initialValues, setInitialValues] = useState<SignUpDataType>({});
+
   return (
     <div className=" min-h-screen flex justify-center items-center">
       <div className="bg-white text-black h-fit w-screen max-w-[436px] rounded-lg relative mx-4 py-8 px-4 sm:p-8">
@@ -23,7 +36,7 @@ const AuthComp = ({
         <div className=" flex items-center justify-center mb-2">
           <Tabs
             value={value}
-            onChange={handleChange}
+            onChange={(event: React.SyntheticEvent, newValue: AuthTabTypes) => onChangeActiveTab(newValue)}
             textColor="primary"
             indicatorColor="primary"
             className="pb-2"
@@ -32,8 +45,12 @@ const AuthComp = ({
             <Tab value="signUp" label="Sign up" />
           </Tabs>
         </div>
-        {value === "signIn" && <LoginFormWithValidation />}
-        {value === "signUp" && <SignUpFormWithValidation />}
+        <AuthContext.Provider
+          value={{ initialValues, setInitialValues, onChangeActiveTab }}
+        >
+          {value === "signIn" && <LoginFormWithValidation />}
+          {value === "signUp" && <SignUpFormWithValidation />}
+        </AuthContext.Provider>
       </div>
     </div>
   );
