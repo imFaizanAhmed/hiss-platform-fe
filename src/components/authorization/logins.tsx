@@ -24,11 +24,7 @@ import LoginWithGoogle from "./login-with-google";
 import LoginButton from "./login-button";
 import axiosInstance from "../../apis/axios";
 import { showToast } from "../../lib/toast";
-
-type LoginDataType = {
-  email?: string;
-  password?: string;
-};
+import { LoginDataType } from "../../types/auth-type";
 
 const Login = ({
   validateForm,
@@ -54,7 +50,6 @@ const Login = ({
   >(loginUser, {
     onSuccess: (data) => {
       // Handle successful login here
-      console.log("data =>", data);
       showToast("Login successful", "success");
       // Redirect user or show success message
       navigate("/home");
@@ -163,7 +158,6 @@ const Login = ({
           <Button
             variant="contained"
             type="submit"
-            onSubmit={(e) => console.log("eeeee", e)}
             className="flex-[100%] w-10"
           >
             {isLoading ? "Loading..." : "Sign In"}
