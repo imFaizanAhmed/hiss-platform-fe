@@ -71,9 +71,13 @@ const SignUp = ({ validateForm, validateInput, errors }: SignUpProps) => {
       // Redirect user or show success message
       navigate("/home");
     },
-    onError: () => {
-      // Handle error case here
-      showToast("Invalid Credentials", "error");
+    onError: ({ response }) => {
+      // Handle error casesx
+      if (response?.status === 406) {
+        showToast("Already have account please try to login", "error");
+      } else {
+        showToast("Invalid Credentials", "error");
+      }
     },
   });
 
