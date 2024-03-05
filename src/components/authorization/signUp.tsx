@@ -260,7 +260,7 @@ const SignUp = ({ validateForm, validateInput, errors }: SignUpProps) => {
           </FormControl>
         </>
       )}
-      <Button variant="contained" type="submit" className=" flex-[100%] w-10">
+      <Button variant="contained" type="submit" className="flex-[100%] w-10">
         {isLoading ? "loading..." : "Sign Up"}
       </Button>
     </form>

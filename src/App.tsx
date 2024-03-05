@@ -2,7 +2,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "@mui/material/styles";
 import { RouterProvider } from "react-router-dom";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { SnackbarProvider } from "notistack";
 import { darkTheme, lightTheme } from "./themes";
 import { router } from "./routes";
 import { GoogleOAuthProvider } from "@react-oauth/google";
