@@ -9,11 +9,11 @@ interface RenderFileProps extends FileDisplayProps {
 
 const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
   console.log("fileType", fileType);
-  const RemoveMedia = ({ handleRemove }: { handleRemove: () => void }) => (
+  const RemoveMedia = ({ handleRemove, top }: { handleRemove: () => void, top?: string | number }) => (
     <CustomTooltip tooltipText="Remove Media">
       <FontAwesomeIcon
         icon={faCircleXmark}
-        className="mr-4 h-5 cursor-pointer absolute top-2 right-2"
+        className={`mr-4 h-5 cursor-pointer absolute ${top? `${'top-' + top}`: 'top-2'} right-2`}
         onClick={handleRemove}
       />
     </CustomTooltip>
@@ -71,7 +71,7 @@ const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
           allowFullScreen // Optional: if you want to allow fullscreen (note the camelCase in React)
           title="My iframe" // Recommended: for accessibility reasons
         ></iframe>
-        <RemoveMedia handleRemove={handleRemoveMedia} />
+        <RemoveMedia handleRemove={handleRemoveMedia} top={12} />
       </div>
     );
   };
