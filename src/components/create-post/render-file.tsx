@@ -1,14 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { CustomTooltip } from "../../lib/tooltip";
-import { FileDisplayProps } from "./create-post.model";
+import { FileDisplayProps } from "./types";
 
 interface RenderFileProps extends FileDisplayProps {
   setFile: (t: FileDisplayProps) => void;
 }
 
 const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
-  console.log("fileType", fileType);
   const RemoveMedia = ({ handleRemove, top }: { handleRemove: () => void, top?: string | number }) => (
     <CustomTooltip tooltipText="Remove Media">
       <FontAwesomeIcon
@@ -22,6 +21,7 @@ const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
     setFile({
       fileType: "",
       fileUrl: "",
+      file: null
     });
   };
 
@@ -61,7 +61,6 @@ const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
   };
 
   const DisplayPDF: React.FC<FileDisplayProps> = ({ fileUrl }) => {
-    console.log("fileUrl", fileUrl);
     return (
       <div className="relative border">
         <iframe

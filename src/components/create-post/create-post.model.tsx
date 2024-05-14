@@ -2,31 +2,60 @@ import { useRef, useState } from "react";
 import { TextareaAutosize } from "@mui/material";
 import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPhotoFilm,
-  faFile,
-  faCircleXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPhotoFilm, faFile } from "@fortawesome/free-solid-svg-icons";
+import { useMutation } from "react-query";
 import ShowModal from "../../lib/model";
-import { CreatePostModalType } from "../../types/create-post.type";
+import { CreatePostModalType } from "../../types/post.type";
 import { CustomTooltip } from "../../lib/tooltip";
 import RenderFile from "./render-file";
-
-export interface FileDisplayProps {
-  fileType?: "image" | "video" | "pdf" | "";
-  fileUrl: string;
-}
+import { AxiosError, AxiosResponse } from "axios";
+import { CreatePostAPIType, FileDisplayProps } from "./types";
+import { showToast } from "../../lib/toast";
+import axiosInstance from "../../apis/axios";
 
 const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
   // State to store the uploaded file
   const [file, setFile] = useState<FileDisplayProps>({
     fileType: "",
     fileUrl: "",
+    file: null,
   });
   const fileRef = useRef<HTMLInputElement>(null);
   const pdfFileRef = useRef<HTMLInputElement>(null);
 
-  const [postContent, setPostContent] = useState<string>('');
+  const [postContent, setPostContent] = useState<string>("");
+
+  const { mutate, isLoading, isError, error } = useMutation<
+    AxiosResponse,
+    AxiosError,
+    CreatePostAPIType
+  >(createPostAPI, {
+    onSuccess: () => {
+      // Handle successful login here
+      showToast("Post created successful", "success");
+      handleClose();
+    },
+    onError: ({ response }) => {
+      // Handle error casesx
+      showToast("Issue occur while creating post", "error");
+    },
+  });
+
+  async function createPostAPI(
+    formData: CreatePostAPIType
+  ): Promise<AxiosResponse> {
+    return axiosInstance.post(
+      "/post/create",
+      {
+        ...formData,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  }
 
   // Enhance event typing for better type checking in the event handler
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +63,8 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
     if (!file) {
       return;
     }
+
+    console.log("file", file);
 
     const fileUrl = URL.createObjectURL(file);
     let fileType: "image" | "video" | "pdf" | "" = "";
@@ -46,7 +77,7 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
       fileType = "pdf";
     }
 
-    setFile({ fileType, fileUrl });
+    setFile({ fileType, fileUrl, file });
   };
 
   // Function to trigger the hidden file input click event
@@ -59,57 +90,11 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
     pdfFileRef.current?.click();
   };
 
-  // Function to remove media
-  const handleRemoveMedia = () => {
-    // setFile({
-    //   fileType: "",
-    //   fileUrl: "",
-    // });
-  };
+  // Function to call create post API on submitting the post
+  const onCreatePost = () => {
+    if (!file.file) return;
 
-  const RemoveMedia = ({ handleRemove }: { handleRemove: () => void }) => (
-    <CustomTooltip tooltipText="Remove Media">
-      <FontAwesomeIcon
-        icon={faCircleXmark}
-        className="mr-4 h-5 cursor-pointer absolute top-2 right-2"
-        onClick={handleRemove}
-      />
-    </CustomTooltip>
-  );
-
-  const DisplayImage: React.FC<FileDisplayProps> = ({ fileUrl }) => {
-    return (
-      <div className="relative h-[200px] border-cyan-50">
-        <img
-          src={fileUrl}
-          alt="Uploaded"
-          style={{
-            width: "100%",
-            maxHeight: "400px",
-            objectFit: "contain",
-            border: "0.5px solid black",
-            padding: 4,
-            borderRadius: 8,
-          }}
-        />
-        <RemoveMedia handleRemove={handleRemoveMedia} />
-      </div>
-    );
-  };
-
-  const DisplayVideo: React.FC<FileDisplayProps> = ({ fileUrl }) => {
-    return (
-      <div className="relative h-[200px] border-cyan-50">
-        <video
-          controls
-          style={{ width: "100%", maxHeight: "400px", padding: 4 }}
-        >
-          <source src={fileUrl} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <RemoveMedia handleRemove={handleRemoveMedia} />
-      </div>
-    );
+    mutate({ media: file.file, content: postContent, creatorId: "65d1ed166f56de4d16766471" });
   };
 
   return (
@@ -119,7 +104,8 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
           <TextareaAutosize
             aria-label="empty textarea"
             placeholder="Enter your text here"
-            // onChange={(e) => setPostContent(e.value.target)}
+            value={postContent}
+            onChange={(event) => setPostContent(event.target.value)}
             style={{
               width: "100%",
               resize: "none",
@@ -129,7 +115,11 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
               border: "1px solid black",
             }}
           />
-          <RenderFile fileType={file.fileType} fileUrl={file.fileUrl} setFile={setFile}/>
+          <RenderFile
+            fileType={file.fileType}
+            fileUrl={file.fileUrl}
+            setFile={setFile}
+          />
         </div>
         <div className="flex justify-between items-center mt-2 h-9">
           <div id="modal-modal-description">
@@ -148,7 +138,11 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
               />
             </CustomTooltip>
           </div>
-          <Button variant="contained" className="!rounded-lg font-bold">
+          <Button
+            variant="contained"
+            className="!rounded-lg font-bold"
+            onClick={onCreatePost}
+          >
             Post
           </Button>
         </div>
