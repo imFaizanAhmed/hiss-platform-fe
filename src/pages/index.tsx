@@ -1,5 +1,4 @@
 import CreatePost from "../components/create-post";
-// import PrimarySearchAppBar from "../components/header";
 import PrimarySearchAppBar from "../components/Header";
 import ProfileSection from "../components/profile-section";
 import Posts from "./posts";
