@@ -3,6 +3,8 @@ import RecipeReviewCard from "../../components/post";
 import axiosInstance from "../../apis/axios";
 import { ApiResponse } from "../../types/post.type";
 import { useEffect, useRef } from "react";
+import { Skeleton } from "@mui/material";
+import LoadingFeed from "./loading-feed";
 
 const Posts = () => {
   const fetchPosts = async ({ pageParam = 1 }) => {
@@ -46,7 +48,7 @@ const Posts = () => {
         }
       },
       {
-        rootMargin: '100px',
+        rootMargin: "100px",
       }
     );
 
@@ -61,15 +63,19 @@ const Posts = () => {
     };
   }, [fetchNextPage, hasNextPage]);
 
-
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="mt-8">
+        <LoadingFeed />
+        <LoadingFeed />
+      </div>
+    );
   if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
       <div className="w-full mt-8 rounded-lg">
         {data?.pages.map((page, index) => {
-          console.log("page =>", page);
           return (
             <div key={index}>
               {page?.data.map((post, index) => (
@@ -81,8 +87,13 @@ const Posts = () => {
           );
         })}
       </div>
-      <div ref={observerElem} style={{ height: '20px' }} />
-      {isFetchingNextPage && <div>Loading more...</div>}
+      <div ref={observerElem} style={{ height: "20px" }} />
+      {isFetchingNextPage && (
+        <div className="mt-2">
+          <LoadingFeed />
+          <LoadingFeed />
+        </div>
+      )}
       {!hasNextPage && <div>No More Posts</div>}
     </>
   );
