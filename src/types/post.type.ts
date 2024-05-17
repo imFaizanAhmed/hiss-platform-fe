@@ -4,6 +4,7 @@ export type CreatePostModalType = {
 };
 
 export type getPostResposeType = {
+  _id: string;
   creatorId: string;
   content: string;
   reactions: { reaction: string; creatorId: string }[];
@@ -15,10 +16,10 @@ export type getPostResposeType = {
     id: number;
     creatorId: string;
     content: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date | null;
-    replies: {
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date | null;
+    replies?: {
       id: number;
       userId: string;
       content: string;
@@ -37,4 +38,10 @@ export type getPostResposeType = {
 export type ApiResponse = {
   data: getPostResposeType[];
   hasMore: boolean;
+}
+
+export type addCommentPayload = {
+  creatorId: string;
+  postId: string;
+  content: string
 }

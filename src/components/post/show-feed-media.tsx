@@ -10,9 +10,6 @@ const ShowFeedMedia = ({
   const fileTypeSplit = fileType?.split("/");
   const mainType = fileTypeSplit ? fileTypeSplit[0] : null;
   const subType = fileTypeSplit ? fileTypeSplit[1] : null;
-
-  console.log("mainType", mainType);
-  console.log("subType", subType);
   // console.log("base64Url", base64Url);
 
   return (
