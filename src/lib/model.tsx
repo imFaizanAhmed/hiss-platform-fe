@@ -60,7 +60,7 @@ const ShowModal = ({
             {header}
           </Typography>
         )}
-        <div style={{ overflowY: "scroll" }}>{children}</div>
+        {children}
         {footer && (
           <Typography
             id="modal-modal-title"
