@@ -28,3 +28,8 @@ export type getPostResposeType = {
   fileUrl?: string;
   media?: string;
 }
+
+export type ApiResponse = {
+  data: getPostResposeType[];
+  hasMore: boolean;
+}
