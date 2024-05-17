@@ -6,33 +6,18 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChatIcon from "@mui/icons-material/Chat";
 import { getPostResposeType } from "../../types/post.type";
 import { getFileType } from "../../utils/base64.helper";
-import ShowFeedMedia from "./show-feed-media";
 import { Images } from "../../assets";
-import ResponsiveInput from "../../lib/responsive-input";
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+import ResponsiveInputField from "../../lib/responsive-input";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ShareIcon from "@mui/icons-material/Share";
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import ChatIcon from "@mui/icons-material/Chat";
+import ShowFeedMedia from "./show-feed-media";
 
 export default function RecipeReviewCard({
   postData,
@@ -103,17 +88,20 @@ export default function RecipeReviewCard({
         <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
+        <IconButton aria-label="share">
+          <DoubleArrowIcon />
+        </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-        <div className="flex gap-2">
-        <Avatar
-          alt="Remy Sharp"
-          className="!h-12 !w-12"
-          src={Images.profilePic2}
-        />
-       <ResponsiveInput placeholder="Write valuable comment" />
-      </div>
+          <div className="flex gap-2">
+            <Avatar
+              alt="Remy Sharp"
+              className="!h-12 !w-12"
+              src={Images.profilePic2}
+            />
+            <ResponsiveInputField placeholder="Write valuable comment" Icon={DoubleArrowIcon} />
+          </div>
         </CardContent>
       </Collapse>
     </Card>
