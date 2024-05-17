@@ -1,26 +1,28 @@
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import RecipeReviewCard from "../../components/post";
 import axiosInstance from "../../apis/axios";
 import { useEffect, useState } from "react";
 import { getPostResposeType } from "../../types/post.type";
 
 const Posts = () => {
-  const [postData, setPostData] = useState<getPostResposeType>();
+  const [postData, setPostData] = useState<getPostResposeType[]>();
   // image content
   // const id = "66007a4cef2585f1fa454fe6";
+  const page = 1, limit = 2;
 
-  const { error, data, isLoading } = useQuery({
+  const { error, data, isLoading } = useInfiniteQuery({
     queryKey: ["get-all-posts"],
-    queryFn: () => axiosInstance.get(`post/all`),
+    queryFn: () => axiosInstance.get(`post/all?page=${page}&limit=${limit}`),
     refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     if (data) {
-      if (data.data?.file) {
-        data.data.fileUrl = URL.createObjectURL(data.data?.file);
-      }
-      setPostData(data.data);
+      console.log("data => ", data);
+      // if (data.data?.file) {
+      //   data.data.fileUrl = URL.createObjectURL(data.data?.file);
+      // }
+      // setPostData(data.data);
     }
   }, [data && !error]);
 
@@ -28,9 +30,9 @@ const Posts = () => {
     <>
       {!isLoading && postData ? (
         <div className="w-full mt-8 rounded-lg">
-          {[0, 1, 2, 3, 4].map((_, index) => (
+          {postData.map((post, index) => (
             <div key={index} className={index !== 4 ? "mb-4" : ""}>
-              <RecipeReviewCard postData={postData} />
+              <RecipeReviewCard postData={post} />
             </div>
           ))}
         </div>

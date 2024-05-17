@@ -1,7 +1,7 @@
 import { Avatar } from "@mui/material";
 import { Images } from "../../assets";
 import { useState } from "react";
-import CreatePostModal from "./create-post.model";
+import CreatePostModal from "./create-post.modal";
 
 const CreatePost = () => {
   const [open, setOpen] = useState(false);

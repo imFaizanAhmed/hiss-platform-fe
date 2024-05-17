@@ -64,7 +64,7 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
       return;
     }
 
-    console.log("file", file);
+    // console.log("file", file);
 
     const fileUrl = URL.createObjectURL(file);
     let fileType: "image" | "video" | "pdf" | "" = "";
@@ -109,7 +109,7 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
             style={{
               width: "100%",
               resize: "none",
-              height: file.fileType ? "80%" : "100%",
+              height: file.fileType ? "80%" : "98%",
               borderRadius: 8,
               padding: 8,
               border: "1px solid black",

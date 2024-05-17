@@ -8,11 +8,23 @@ interface RenderFileProps extends FileDisplayProps {
 }
 
 const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
-  const RemoveMedia = ({ handleRemove, top }: { handleRemove: () => void, top?: string | number }) => (
+  const RemoveMedia = ({
+    handleRemove,
+    top = 2,
+    right = 2,
+    color = 'black'
+  }: {
+    handleRemove: () => void;
+    top?: string | number;
+    right?: string | number;
+    color?: string;
+  }) => (
     <CustomTooltip tooltipText="Remove Media">
       <FontAwesomeIcon
         icon={faCircleXmark}
-        className={`mr-4 h-5 cursor-pointer absolute ${top? `${'top-' + top}`: 'top-2'} right-2`}
+        style={{ top, right }}
+        color={color}
+        className={`mr-4 h-5 cursor-pointer absolute`}
         onClick={handleRemove}
       />
     </CustomTooltip>
@@ -21,7 +33,7 @@ const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
     setFile({
       fileType: "",
       fileUrl: "",
-      file: null
+      file: null,
     });
   };
 
@@ -70,7 +82,7 @@ const RenderFile = ({ fileType, fileUrl, setFile }: RenderFileProps) => {
           allowFullScreen // Optional: if you want to allow fullscreen (note the camelCase in React)
           title="My iframe" // Recommended: for accessibility reasons
         ></iframe>
-        <RemoveMedia handleRemove={handleRemoveMedia} top={12} />
+        <RemoveMedia handleRemove={handleRemoveMedia} top={17} right={112} color={'white'} />
       </div>
     );
   };
