@@ -3,7 +3,6 @@ import RecipeReviewCard from "../../components/post";
 import axiosInstance from "../../apis/axios";
 import { ApiResponse } from "../../types/post.type";
 import { useEffect, useRef } from "react";
-import { Skeleton } from "@mui/material";
 import LoadingFeed from "./loading-feed";
 
 const Posts = () => {
@@ -43,7 +42,7 @@ const Posts = () => {
     // infinite scroll functionality
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage) {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
           fetchNextPage();
         }
       },
@@ -61,7 +60,7 @@ const Posts = () => {
         observer.unobserve(observerElem.current);
       }
     };
-  }, [fetchNextPage, hasNextPage]);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   if (isLoading)
     return (

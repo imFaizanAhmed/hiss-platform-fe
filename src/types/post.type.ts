@@ -7,6 +7,10 @@ export type getPostResposeType = {
   creatorId: string;
   content: string;
   reactions: { reaction: string; creatorId: string }[];
+  creator: {
+    firstName: string;
+    lastName: string;
+  };
   comments: {
     id: number;
     creatorId: string;
@@ -27,6 +31,7 @@ export type getPostResposeType = {
   file?: Buffer;
   fileUrl?: string;
   media?: string;
+  createdAt: Date
 }
 
 export type ApiResponse = {
