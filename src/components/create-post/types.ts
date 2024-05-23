@@ -8,5 +8,5 @@ export interface FileDisplayProps {
 export interface CreatePostAPIType {
   content: string;
   creatorId: string;
-  media: Blob;
+  media?: Blob | null;
 }

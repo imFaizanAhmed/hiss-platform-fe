@@ -6,56 +6,49 @@ import { useMutation } from "react-query";
 import { Images } from "../../assets";
 import { AxiosError, AxiosResponse } from "axios";
 import ResponsiveInputField from "../../lib/responsive-input";
-import { addCommentPayload, getPostResposeType } from "../../types/post.type";
+import { AddCommentPayload, getPostResposeType } from "../../types/post.type";
 import axiosInstance from "../../apis/axios";
+import { showToast } from "../../lib/toast";
+import LikeAComment from "./like-a-comment";
 
 const CommentsSection = ({ postData }: { postData: getPostResposeType }) => {
   const theme = useTheme();
 
   const [comment, setComment] = useState<string>("");
-  const { mutate, isLoading, isError, error } = useMutation<
-    AxiosResponse,
-    AxiosError,
-    addCommentPayload
-  >(createPostAPI, {
-    onSuccess: () => {
-      // Handle successful
-      setComment("");
-    },
-    onError: ({ response }) => {
-      // Handle error
-    },
-  });
+  const { mutate } = useMutation<AxiosResponse, AxiosError, AddCommentPayload>(
+    createPostAPI,
+    {
+      onSuccess: () => {
+        // Handle successful
+        setComment("");
+      },
+      onError: () => {
+        // Handle
+        showToast("something went wrong", "error");
+      },
+    }
+  );
 
   async function createPostAPI(
-    formData: addCommentPayload
+    formData: AddCommentPayload
   ): Promise<AxiosResponse> {
-    return axiosInstance.post(
-      "/post/add-comment",
-      {
-        ...formData,
-      },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    return axiosInstance.post("/post/add-post-comments", {
+      ...formData,
+    });
   }
 
   const onCommentSubmitted = () => {
-    console.log("comment =>", comment);
     // ? have to change that creatorId to actually login creator Id
     mutate({
       content: comment,
       creatorId: postData?.creatorId,
       postId: postData?._id,
     });
-    console.log("Adding comments on the frontend");
     postData.comments.unshift({
       id: -1,
       creatorId: postData?.creatorId,
       content: comment,
+      totalLikes: 0
     });
     setComment("");
   };
@@ -85,12 +78,20 @@ const CommentsSection = ({ postData }: { postData: getPostResposeType }) => {
                 className="!h-10 !w-10"
                 src={Images.profilePic2}
               />
-              <p
-                className="my-auto w-full p-2 rounded whitespace-pre"
-                style={{ backgroundColor: theme.palette.background.default }}
-              >
-                {comment.content}
-              </p>
+              <div className="w-full">
+                <p
+                  className="my-auto p-2 rounded whitespace-pre"
+                  style={{ backgroundColor: theme.palette.background.default }}
+                >
+                  {comment.content}
+                </p>
+                <LikeAComment
+                  commentId={comment.id}
+                  postId={postData._id}
+                  creatorId={postData?.creatorId}
+                  likeCount={comment.totalLikes ?? 0}
+                />
+              </div>
             </div>
           ))
         : null}

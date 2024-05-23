@@ -92,9 +92,12 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
 
   // Function to call create post API on submitting the post
   const onCreatePost = () => {
-    if (!file.file) return;
 
-    mutate({ media: file.file, content: postContent, creatorId: "65d1ed166f56de4d16766471" });
+    mutate({
+      media: file.file,
+      content: postContent,
+      creatorId: "65d1ed166f56de4d16766471",
+    });
   };
 
   return (

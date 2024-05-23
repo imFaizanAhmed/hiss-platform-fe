@@ -16,6 +16,7 @@ export type getPostResposeType = {
     id: number;
     creatorId: string;
     content: string;
+    totalLikes: number;
     createdAt?: Date;
     updatedAt?: Date;
     deletedAt?: Date | null;
@@ -40,8 +41,15 @@ export type ApiResponse = {
   hasMore: boolean;
 }
 
-export type addCommentPayload = {
+export type AddCommentPayload = {
   creatorId: string;
   postId: string;
   content: string
+}
+
+export type LikeUnlikeCommentType = {
+  commentId: number;
+  likeCount: number;
+  postId: string;
+  creatorId: string;
 }
