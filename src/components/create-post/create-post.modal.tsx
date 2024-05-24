@@ -64,8 +64,6 @@ const CreatePostModal = ({ open, handleClose }: CreatePostModalType) => {
       return;
     }
 
-    // console.log("file", file);
-
     const fileUrl = URL.createObjectURL(file);
     let fileType: "image" | "video" | "pdf" | "" = "";
 

@@ -29,7 +29,6 @@ export default function RecipeReviewCard({
       const type = getFileType(postData.media);
       setMediaType(type);
     }
-    console.log("postData =>", postData);
   }, [postData]);
 
   const handleExpandClick = () => {
