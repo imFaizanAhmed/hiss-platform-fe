@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "react-query";
-import RecipeReviewCard from "../../components/post";
+import PostCard from "../../components/post";
 import axiosInstance from "../../apis/axios";
 import { ApiResponse } from "../../types/post.type";
 import { useEffect, useRef } from "react";
@@ -79,7 +79,7 @@ const Posts = () => {
             <div key={index}>
               {page?.data.map((post, index) => (
                 <div key={index} className={index !== 4 ? "mb-4" : ""}>
-                  <RecipeReviewCard postData={post} />
+                  <PostCard postData={post} />
                 </div>
               ))}
             </div>

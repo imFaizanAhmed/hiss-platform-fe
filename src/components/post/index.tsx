@@ -16,7 +16,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import ShowFeedMedia from "./show-feed-media";
 import CommentsSection from "./comments-section";
 
-export default function RecipeReviewCard({
+export default function PostCard({
   postData,
 }: {
   postData: getPostResposeType;
