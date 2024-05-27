@@ -46,10 +46,9 @@ export type getCommentsApiData = {
   createdAt: Date;
   creatorId: string;
   deletedAt: Date | null;
-  id: number;
   totalLikes: number;
   updatedAt: string;
-  _id: number;
+  id: number;
 };
 
 export type getCommentsApiResponse = {
@@ -63,9 +62,12 @@ export type AddCommentPayload = {
   content: string;
 };
 
+export type likeUnlikeType = 'LIKE' | 'UNLIKE';
+
 export type LikeUnlikeCommentType = {
   commentId: number;
   likeCount: number;
   postId: string;
   creatorId: string;
+  status: likeUnlikeType;
 };

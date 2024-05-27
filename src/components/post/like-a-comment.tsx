@@ -3,7 +3,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { useMutation } from "react-query";
 import { showToast } from "../../lib/toast";
 import axiosInstance from "../../apis/axios";
-import { LikeUnlikeCommentType } from "../../types/post.type";
+import { LikeUnlikeCommentType, likeUnlikeType } from "../../types/post.type";
 
 type ActionType = { type: "LIKE" } | { type: "UNLIKE" };
 
@@ -71,10 +71,11 @@ const LikeAComment = ({
   }
 
   const onLikeUnlikeComment = () => {
-    let likeCount;
+    let likeCount, status: likeUnlikeType = 'LIKE';
     if (state.isLike) {
       dispatch({ type: "UNLIKE" });
       likeCount = state.updatedLikeCount - 1;
+      status = 'UNLIKE';
     } else {
       dispatch({ type: "LIKE" });
       likeCount = state.updatedLikeCount + 1;
@@ -85,7 +86,8 @@ const LikeAComment = ({
       commentId,
       likeCount,
       postId,
-      creatorId
+      creatorId,
+      status
     });
   };
 

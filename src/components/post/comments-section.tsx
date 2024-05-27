@@ -115,7 +115,7 @@ const CommentsSection = ({ postData }: { postData: getPostResposeType }) => {
             {!!comments.data
               ? comments.data.map((comment) => {
                   return (
-                    <div key={comment._id} className="w-full flex gap-2">
+                    <div key={comment.id} className="w-full flex gap-2">
                       <Avatar
                         alt="Remy Sharp"
                         className="!h-10 !w-10"
@@ -131,7 +131,7 @@ const CommentsSection = ({ postData }: { postData: getPostResposeType }) => {
                           {comment.content}
                         </p>
                         <LikeAComment
-                          commentId={comment._id}
+                          commentId={comment.id}
                           postId={postData._id}
                           creatorId={postData?.creatorId}
                           likeCount={comment.totalLikes ?? 0}
