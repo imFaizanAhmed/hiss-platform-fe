@@ -111,47 +111,49 @@ const CommentsSection = ({ postData }: { postData: getPostResposeType }) => {
       {data?.pages.map((page, index) => {
         const comments = !!page && page[0];
         return (
-          <div key={index} className="w-full">
-            {!!comments.data
-              ? comments.data.map((comment) => {
-                  return (
-                    <div key={comment.id} className="w-full flex gap-2">
-                      <Avatar
-                        alt="Remy Sharp"
-                        className="!h-10 !w-10"
-                        src={Images.profilePic2}
-                      />
-                      <div className="w-full">
-                        <p
-                          className="my-auto p-2 rounded"
-                          style={{
-                            backgroundColor: theme.palette.background.default,
-                          }}
-                        >
-                          {comment.content}
-                        </p>
-                        <LikeAComment
-                          commentId={comment.id}
-                          postId={postData._id}
-                          creatorId={postData?.creatorId}
-                          likeCount={comment.totalLikes ?? 0}
+          <>
+            <div key={index} className="w-full">
+              {!!comments.data
+                ? comments.data.map((comment) => {
+                    return (
+                      <div key={comment.id} className="w-full flex gap-2">
+                        <Avatar
+                          alt="Remy Sharp"
+                          className="!h-10 !w-10"
+                          src={Images.profilePic2}
                         />
+                        <div className="w-full">
+                          <p
+                            className="my-auto p-2 rounded"
+                            style={{
+                              backgroundColor: theme.palette.background.default,
+                            }}
+                          >
+                            {comment.content}
+                          </p>
+                          <LikeAComment
+                            commentId={comment.id}
+                            postId={postData._id}
+                            creatorId={postData?.creatorId}
+                            likeCount={comment.totalLikes ?? 0}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              : null}
-          </div>
+                    );
+                  })
+                : null}
+            </div>
+            <div ref={observerElem} style={{ height: "20px" }} />
+            {!hasNextPage && <div>No More Comments</div>}
+          </>
         );
       })}
-      <div ref={observerElem} style={{ height: "20px" }} />
       {(isFetchingNextPage || isLoading) && (
-        <div>
+        <div className="flex flex-wrap w-full">
           <LoadingComments />
           <LoadingComments />
         </div>
       )}
-      {!hasNextPage && <div>No More Comments</div>}
     </div>
   );
 };
